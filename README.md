@@ -31,7 +31,7 @@ project/
 │   ├── raw/                # Original data
 │   └── processed/          # Cleaned data
 ├── notebooks/
-│   ├── 01_data_collection_theory.ipynb
+│   ├── AUSTIN-_data_collection_theory.ipynb
 │   ├── 02_preprocessing_visualization.ipynb
 │   ├── 03_arima_sarima.ipynb
 │   ├── 04_prophet.ipynb
