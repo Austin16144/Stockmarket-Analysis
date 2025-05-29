@@ -1,0 +1,41 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Environment folders
+env/
+venv/
+ENV/
+VENV/
+.venv/
+
+# Python virtual environment metadata
+*.egg-info/
+dist/
+build/
+
+# Data files
+*.csv
+*.xlsx
+*.json
+
+# Model files
+*.h5
+*.pkl
+*.joblib
+*.ckpt
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# Streamlit and Flask
+.streamlit/
