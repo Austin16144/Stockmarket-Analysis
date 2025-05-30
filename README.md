@@ -45,7 +45,7 @@ Stockmarket-Analysis/
 ## 👥 Team Members
 
 - Austin – Time Series Concepts & Data Collection
-- Person 2 – Preprocessing & Visualization
+- Vijaya – Preprocessing & Visualization
 - Person 3 – ARIMA/SARIMA Modeling
 - Person 4 – Prophet Forecasting
 - Person 5 – LSTM Modeling
