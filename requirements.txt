@@ -6,7 +6,7 @@ seaborn
 plotly
 statsmodels
 scikit-learn
-prophet==1.1.5
-tensorflow==2.14.0
+prophet
+tensorflow
 keras==2.14.0
 streamlit
