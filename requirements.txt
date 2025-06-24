@@ -8,5 +8,6 @@ statsmodels
 scikit-learn
 prophet
 tensorflow
-keras==2.14.0
+keras
+xgboost
 streamlit
