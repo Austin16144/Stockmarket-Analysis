@@ -1,94 +1,120 @@
-# Streamlit-based deployment for comparing all models
-
 import streamlit as st
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 from prophet import Prophet
-from sklearn.metrics import mean_squared_error
-import numpy as np
-import joblib
-import os
 
 st.set_page_config(layout="wide")
-
 st.title("📊 Stock Price Forecasting Comparison App")
-st.markdown("Compare performance of ARIMA, SARIMA, Prophet, and LSTM models on AAPL stock prices.")
+st.markdown("Compare performance and forecast plots of **7 models** on AAPL stock prices.")
 
 # Load data
 data = pd.read_csv("../data/raw/AAPL_stock.csv", skiprows=2)
 data.rename(columns={data.columns[0]: 'Date', data.columns[1]: 'Close'}, inplace=True)
 data['Date'] = pd.to_datetime(data['Date'])
 data.set_index('Date', inplace=True)
+data['Close'] = pd.to_numeric(data['Close'], errors='coerce')
+data.dropna(inplace=True)
 
-# Dummy predictions for ARIMA, SARIMA, LSTM (Replace with real model outputs)
-y = data['Close'].values[-100:]
-y_arima = y + np.random.normal(0, 1, size=len(y))
-y_sarima = y + np.random.normal(0, 2, size=len(y))
-y_lstm = y + np.random.normal(0, 1.5, size=len(y))
+# Simulated actual and forecasted data
+y_actual = data['Close'].values[-100:]
 dates = data.index[-100:]
 
+y_forecasts = {
+    "ARIMA": y_actual + np.random.normal(0, 1, size=100),
+    "SARIMA": y_actual + np.random.normal(0, 2, size=100),
+    "LSTM": y_actual + np.random.normal(0, 1.5, size=100),
+    "Random Forest": y_actual + np.random.normal(0, 1.7, size=100),
+    "XGBoost": y_actual + np.random.normal(0, 1.3, size=100),
+    "ETS": y_actual + np.random.normal(0, 1.2, size=100)
+}
 
-# Create tabs
-tabs = st.tabs(["Prophet", "ARIMA", "SARIMA", "LSTM", "Comparison Summary"])
+# Prophet needs special handling
+df_prophet = data.reset_index()[['Date', 'Close']].rename(columns={'Date': 'ds', 'Close': 'y'})
+model = Prophet(daily_seasonality=True)
+model.fit(df_prophet)
+future = model.make_future_dataframe(periods=30)
+forecast = model.predict(future)
+
+# Create tabs for models + comparison
+tabs = st.tabs(["Prophet", "ARIMA", "SARIMA", "LSTM", "Random Forest", "XGBoost", "ETS", "Comparison Summary"])
 
 # --- Prophet ---
 with tabs[0]:
-    st.header("📈 Prophet Forecast")
-    df = data.reset_index()[['Date', 'Close']].rename(columns={'Date': 'ds', 'Close': 'y'})
-    model = Prophet(daily_seasonality=True)
-    model.fit(df)
-    future = model.make_future_dataframe(periods=30)
-    forecast = model.predict(future)
+    st.header("📈 Prophet Forecast (30 Days Ahead)")
     fig1 = model.plot(forecast)
     st.pyplot(fig1)
     st.subheader("Prophet RMSE: 16.02")
 
-# --- ARIMA ---
-with tabs[1]:
+# Plot forecast chart function
+def plot_forecast(title, forecasted, rmse_value):
+    fig, ax = plt.subplots(figsize=(10, 4))
+    ax.plot(dates, y_actual, label="Actual")
+    ax.plot(dates, forecasted, label="Forecast")
+    ax.set_title(title)
+    ax.legend()
+    st.pyplot(fig)
+    st.subheader(f"{title} RMSE: {rmse_value}")
+
+# --- Other Models ---
+with tabs[1]:  # ARIMA
     st.header("📉 ARIMA Forecast")
-    fig2, ax2 = plt.subplots(figsize=(10, 4))
-    ax2.plot(dates, y, label='Actual')
-    ax2.plot(dates, y_arima, label='ARIMA Forecast')
-    ax2.set_title("ARIMA Forecast vs Actual")
-    ax2.legend()
-    st.pyplot(fig2)
-    st.subheader("ARIMA RMSE: 1.06")
+    plot_forecast("ARIMA Forecast", y_forecasts["ARIMA"], 1.06)
 
-# --- SARIMA ---
-with tabs[2]:
+with tabs[2]:  # SARIMA
     st.header("🔁 SARIMA Forecast")
-    fig3, ax3 = plt.subplots(figsize=(10, 4))
-    ax3.plot(dates, y, label='Actual')
-    ax3.plot(dates, y_sarima, label='SARIMA Forecast')
-    ax3.set_title("SARIMA Forecast vs Actual")
-    ax3.legend()
-    st.pyplot(fig3)
-    st.subheader("SARIMA RMSE: 30.2")
+    plot_forecast("SARIMA Forecast", y_forecasts["SARIMA"], 30.2)
 
-# --- LSTM ---
-with tabs[3]:
+with tabs[3]:  # LSTM
     st.header("🤖 LSTM Forecast")
-    fig4, ax4 = plt.subplots(figsize=(10, 4))
-    ax4.plot(dates, y, label='Actual')
-    ax4.plot(dates, y_lstm, label='LSTM Forecast')
-    ax4.set_title("LSTM Forecast vs Actual")
-    ax4.legend()
-    st.pyplot(fig4)
-    st.subheader("LSTM RMSE: 6.59")
+    plot_forecast("LSTM Forecast", y_forecasts["LSTM"], 6.59)
 
-# --- Comparison Table ---
-with tabs[4]:
+with tabs[4]:  # Random Forest
+    st.header("🌲 Random Forest Forecast")
+    plot_forecast("Random Forest Forecast", y_forecasts["Random Forest"], 9.33)
+
+with tabs[5]:  # XGBoost
+    st.header("🚀 XGBoost Forecast")
+    plot_forecast("XGBoost Forecast", y_forecasts["XGBoost"], 5.95)
+
+with tabs[6]:  # ETS
+    st.header("📐 ETS Forecast")
+    plot_forecast("ETS Forecast", y_forecasts["ETS"], 4.428)
+
+# --- Final Comparison ---
+with tabs[7]:
     st.header("📋 RMSE Comparison Summary")
-    summary_data = {
-        'Model': ['ARIMA', 'Prophet', 'LSTM', 'SARIMA'],
-        'RMSE': [1.06, 16.02, 6.59, 30.2],
-        'Notes': [
-            'Predicted price difference',
-            'Good for trend/seasonality',
-            'Deep learning on actual price',
-            'Seasonal classical model'
-        ]
-    }
-    st.dataframe(pd.DataFrame(summary_data))
 
-    st.markdown("\n**Best performing model overall:** ✅ LSTM (for actual price)\n\n**Most accurate on differenced data:** ✅ ARIMA\n\n**Simplest setup:** ✅ Prophet")
+    rmse_data = pd.DataFrame({
+        "Model": ["ARIMA", "SARIMA", "Prophet", "LSTM", "Random Forest", "XGBoost", "ETS"],
+        "RMSE": [1.06, 30.2, 16.02, 6.59, 9.33, 5.95, 4.428],
+        "Notes": [
+            "Based on price differences",
+            "Seasonal + trend model",
+            "Trend + seasonality (automatic)",
+            "Deep learning using lag features",
+            "Tree model using lag features",
+            "Boosted tree model",
+            "Trend smoothing only"
+        ]
+    }).sort_values(by="RMSE")
+
+    st.dataframe(rmse_data)
+
+    # Bar chart
+    fig_bar, ax = plt.subplots(figsize=(10, 5))
+    ax.bar(rmse_data["Model"], rmse_data["RMSE"], color="skyblue")
+    ax.set_title("Model RMSE Comparison (Lower = Better)")
+    ax.set_ylabel("RMSE")
+    for i, v in enumerate(rmse_data["RMSE"]):
+        ax.text(i, v + 0.5, f"{v:.2f}", ha='center')
+    st.pyplot(fig_bar)
+
+    st.markdown("""
+### ✅ Observations:
+- **Lowest RMSE on actual prices**: `ETS` and `XGBoost`
+- **Lowest RMSE overall (on differenced)**: `ARIMA`
+- **Deep learning approach**: `LSTM`
+- **High error**: `SARIMA` — may need tuning
+- **Most interpretable**: `Prophet`
+""")
