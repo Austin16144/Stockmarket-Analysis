@@ -20,7 +20,7 @@ This project is part of a Data Analytics Internship. It focuses on analyzing and
 - **Languages**: Python
 - **Libraries**: Pandas, NumPy, Matplotlib, Seaborn, Plotly, Statsmodels, Scikit-learn, Prophet, TensorFlow/Keras
 - **Tools**: Jupyter Notebook, Git, GitHub
-- **Deployment (optional)**: Streamlit or Flask
+- **Deployment (optional)**: Streamlit
 
 ---
 
@@ -45,11 +45,15 @@ Stockmarket-Analysis/
 ## 👥 Team Members
 
 - Austin – Time Series Concepts & Data Collection
-- Vijaya – Preprocessing & Visualization
-- Person 3 – ARIMA/SARIMA Modeling
-- Person 4 – Prophet Forecasting
-- Person 5 – LSTM Modeling
-- Person 6 – Evaluation, Reporting, and Deployment
+-        – Preprocessing & Visualization
+-        – ARIMA/SARIMA Modeling
+-        – Prophet Forecasting
+-        – LSTM Modeling
+- Shraddha- ETS Modeling
+- Vijay- XG Boost Regression
+- Sneha- KNN Model
+        -Random Forest Regression
+- Austin – Evaluation, Reporting, and Deployment
 
 ---
 
@@ -62,8 +66,6 @@ cd Stockmarket-Analysis
 
 # Install required packages
 pip install -r requirements.txt
-
-## 📊 Results
 
 ## 📄 License
 
