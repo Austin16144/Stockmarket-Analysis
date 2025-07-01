@@ -45,10 +45,10 @@ Stockmarket-Analysis/
 ## 👥 Team Members
 
 - Austin – Time Series Concepts & Data Collection
--        – Preprocessing & Visualization
--        – ARIMA/SARIMA Modeling
--        – Prophet Forecasting
--        – LSTM Modeling
+- Austin – Preprocessing & Visualization
+- Austin – ARIMA/SARIMA Modeling
+- Austin – Prophet Forecasting
+- Austin – LSTM Modeling
 - Shraddha- ETS Modeling
 - Vijay- XG Boost Regression
 - Sneha- KNN Model
